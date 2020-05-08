@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:timetrackerapp/services/auth.dart';
 
 class Home extends StatefulWidget {
-  Home({@required this.onSignOut});
-  VoidCallback onSignOut;
+  Home({ @required this.auth});
+  final AuthBase auth;
 
   Future<void> _signOut() async {
     try {
-      await FirebaseAuth.instance.signOut();
-      onSignOut();
+      await auth.signOut();
     } catch (e) {
-      print('This is error ${e.toString()}');
+      print('This is error ${e.toString()}s');
     }
   }
 
@@ -20,14 +19,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-
-  FirebaseUser _user;
-
   @override
   Widget build(BuildContext context) {
     return _HomeBuild();
   }
 
+  // ignore: non_constant_identifier_names
   Widget _HomeBuild() {
     return Scaffold(
       appBar: AppBar(
@@ -41,13 +38,12 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
               ),
             ),
-            onPressed: () {
-
-            },
+            onPressed: () => widget._signOut(),
           )
         ],
         centerTitle: true,
       ),
+      body: Text("${widget.auth.currentUser()}"),
     );
   }
 }

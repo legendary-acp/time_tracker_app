@@ -1,24 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timetrackerapp/custom_widget/button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:timetrackerapp/services/auth.dart';
 
 class Login extends StatelessWidget {
-
-  Function(FirebaseUser) onSignIn;
-
-  Login({@required onSignIn});
-
+  Login({@required this.auth});
+  final AuthBase auth;
   Future<void> _signInAnonymously() async {
     try {
-      final authResult = await FirebaseAuth.instance.signInAnonymously();
-      print(authResult.user.uid);
-      onSignIn(authResult.user);
+      await auth.signInAnonymously();
     } catch (e) {
       print(e.toString());
     }
   }
-    @override
+  Future<void> _signInWithGoogle() async {
+    try {
+      await auth.signInWithGoogle();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -64,7 +67,7 @@ class Login extends StatelessWidget {
               ],
             ),
             color: Colors.white,
-            onpress: () {},
+            onpress: _signInWithGoogle,
           ),
           SizedBox(
             height: 10.0,

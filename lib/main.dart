@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:timetrackerapp/pages/landing_page.dart';
-import 'package:timetrackerapp/pages/login.dart';
-import 'package:timetrackerapp/pages/home.dart';
+import 'package:timetrackerapp/services/auth.dart';
 
 void main() => runApp(MaterialApp(
   theme: ThemeData(
     primaryColor: Colors.indigo,
   ),
   debugShowCheckedModeBanner: false,
-  home: Landing(),
+  home: Landing(
+    auth: Auth(),
+  ),
 ));
 

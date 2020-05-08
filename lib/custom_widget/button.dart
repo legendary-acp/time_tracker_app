@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: camel_case_types
 class signin_custom_button extends StatelessWidget {
   signin_custom_button({
     this.child,

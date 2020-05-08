@@ -1,37 +1,35 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timetrackerapp/pages/home.dart';
 import 'package:timetrackerapp/pages/login.dart';
+import 'package:timetrackerapp/services/auth.dart';
 
-class Landing extends StatefulWidget {
-  @override
-  _LandingState createState() => _LandingState();
-}
-
-class _LandingState extends State<Landing> {
-  FirebaseUser _user;
-
-  void _updateUser(FirebaseUser _user) {
-    print('It was here');
-    setState(() {
-      this._user = _user;
-    });
-  }
+class Landing extends StatelessWidget {
+  Landing({@required this.auth});
+  final AuthBase auth;
 
   @override
   Widget build(BuildContext context) {
-    if (this._user == null) {
-      return Login(
-        onSignIn: _updateUser,
-      );
-    } else {
-      return Home(
-        onSignOut: () {
-          setState(() {
-            _user = null;
-          });
-        },
-      );
-    }
+    return StreamBuilder<User>(
+      stream: auth.onAuthStateChanged,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          User user = snapshot.data;
+          if (user == null) {
+            return Login(
+              auth: auth,
+            );
+          } else {
+            return Home(
+              auth: auth,
+            );
+          }
+        }
+        else{
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator(),),
+          );
+        }
+      }
+    );
   }
 }
