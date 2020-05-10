@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:timetrackerapp/custom_widget/button.dart';
 import 'package:timetrackerapp/services/auth.dart';
 
+import 'email_login.dart';
+
 class Login extends StatelessWidget {
   Login({@required this.auth});
   final AuthBase auth;
@@ -21,6 +23,23 @@ class Login extends StatelessWidget {
     }
   }
 
+  Future<void> _signInWithFacebook() async {
+    try {
+      await auth.signInWithFacebook();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _signInWithEmail(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (context) => EmailSignIn(auth: auth),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,11 +49,11 @@ class Login extends StatelessWidget {
         centerTitle: true,
         elevation: 10.0,
       ),
-      body: _LoginBuild(),
+      body: _LoginBuild(context),
     );
   }
   // ignore: non_constant_identifier_names
-  Widget _LoginBuild() {
+  Widget _LoginBuild(context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -89,7 +108,7 @@ class Login extends StatelessWidget {
               ],
             ),
             color: Colors.indigo,
-            onpress: () {},
+            onpress: _signInWithFacebook,
           ),
           SizedBox(
             height: 10.0,
@@ -102,7 +121,7 @@ class Login extends StatelessWidget {
               ),
             ),
             color: Colors.lightGreen,
-            onpress: () {},
+            onpress: () => _signInWithEmail(context),
           ),
           SizedBox(
             height: 10.0,
