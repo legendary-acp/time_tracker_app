@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "108460430172",
-    "firebase_url": "https://time-tracker-b6a45.firebaseio.com",
-    "project_id": "time-tracker-b6a45",
-    "storage_bucket": "time-tracker-b6a45.appspot.com"
+    "project_number": "1021214433793",
+    "firebase_url": "https://time-tracker-454bf.firebaseio.com",
+    "project_id": "time-tracker-454bf",
+    "storage_bucket": "time-tracker-454bf.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:108460430172:android:9db14c5609bef75334a799",
+        "mobilesdk_app_id": "1:1021214433793:android:ce60fd7369174f3d041600",
         "android_client_info": {
           "package_name": "com.example.timetrackerapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "108460430172-j438n0mmdrqtjgef5sa0eb80o8sa3b06.apps.googleusercontent.com",
+          "client_id": "1021214433793-9mpe3g9995dgfq9q3v18hgtvhumpcd01.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.timetrackerapp",
-            "certificate_hash": "f495f7305242668e4efa12a091ea4749412dd111"
+            "certificate_hash": "e41fa45bf367abffffe25df6ca55dfed956b8941"
           }
         },
         {
-          "client_id": "108460430172-jvpgfpc0vd3kubr89cbnbqi8irfbgkni.apps.googleusercontent.com",
+          "client_id": "1021214433793-olgof0hba9eedl22pa42taufvbenoaq6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyArPRKsKPPylQ6ZKivuFESBnJYkHf6tVxI"
+          "current_key": "AIzaSyCM06RFni1H-jQ7wZK4buDHQuCJZSx21iU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "108460430172-jvpgfpc0vd3kubr89cbnbqi8irfbgkni.apps.googleusercontent.com",
+              "client_id": "1021214433793-olgof0hba9eedl22pa42taufvbenoaq6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
