@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
 import 'package:timetrackerapp/services/auth.dart';
 
 class Home extends StatefulWidget {
@@ -10,6 +11,18 @@ class Home extends StatefulWidget {
       await auth.signOut();
     } catch (e) {
       print('This is error ${e.toString()}s');
+    }
+  }
+
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final didRequestSignOut = await PlatformAlertDialog(
+      title: 'Sign Out',
+      content: 'Are you sure you want to signout?',
+      defaultActionText: 'Logout',
+      cancelActionText: 'Cancel',
+    ).show(context);
+    if(didRequestSignOut){
+      _signOut();
     }
   }
 
@@ -38,7 +51,7 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
               ),
             ),
-            onPressed: () => widget._signOut(),
+            onPressed: () => widget._confirmSignOut(context),
           )
         ],
         centerTitle: true,

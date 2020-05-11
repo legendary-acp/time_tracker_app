@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timetrackerapp/custom_widget/button.dart';
 import 'package:timetrackerapp/services/auth.dart';
-
-import 'email_login.dart';
+import 'package:timetrackerapp/pages/sign_in_with_email/email_login.dart';
 
 class Login extends StatelessWidget {
   Login({@required this.auth});
