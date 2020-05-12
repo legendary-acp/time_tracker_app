@@ -1,8 +1,8 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
 import 'package:timetrackerapp/services/auth.dart';
 import 'package:timetrackerapp/services/validator.dart';
@@ -12,9 +12,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 enum EmailSignInFormType { signIn, register }
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
-  EmailSignInForm({@required this.auth});
-
-  final AuthBase auth;
 
   @override
   _EmailSignInFormState createState() => _EmailSignInFormState();
@@ -39,16 +36,17 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       _isLoading = true;
     });
     try {
+      final auth=Provider.of<AuthBase>(context, listen: false);
       if (_formType == EmailSignInFormType.signIn) {
-        await widget.auth.signInWithEmailAndPassword(_email, _password);
+        await auth.signInWithEmailAndPassword(_email, _password);
       } else {
-        await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await auth.createUserWithEmailAndPassword(_email, _password);
       }
       Navigator.of(context).pop();
-    } catch (e) {
+    } on PlatformException catch (e) {
       PlatformAlertDialog(
         title: 'Sigin failed',
-        content: e.toString(),
+        content: e.message,
         defaultActionText: 'OK',
       ).show(context);
     } finally {

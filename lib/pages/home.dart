@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
+import 'package:provider/provider.dart';
 import 'package:timetrackerapp/services/auth.dart';
 
 class Home extends StatefulWidget {
-  Home({ @required this.auth});
-  final AuthBase auth;
 
-  Future<void> _signOut() async {
+  Future<void> _signOut(BuildContext context) async {
     try {
+      final auth=Provider.of<AuthBase>(context);
       await auth.signOut();
     } catch (e) {
       print('This is error ${e.toString()}s');
@@ -22,7 +22,7 @@ class Home extends StatefulWidget {
       cancelActionText: 'Cancel',
     ).show(context);
     if(didRequestSignOut){
-      _signOut();
+      _signOut(context);
     }
   }
 
@@ -39,6 +39,7 @@ class _HomeState extends State<Home> {
 
   // ignore: non_constant_identifier_names
   Widget _HomeBuild() {
+    final auth=Provider.of<AuthBase>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
@@ -56,7 +57,7 @@ class _HomeState extends State<Home> {
         ],
         centerTitle: true,
       ),
-      body: Text("${widget.auth.currentUser()}"),
+      body: Text("${auth.currentUser()}"),
     );
   }
 }
