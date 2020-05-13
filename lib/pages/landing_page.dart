@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timetrackerapp/pages/home.dart';
-import 'package:timetrackerapp/pages/login.dart';
+import 'package:timetrackerapp/pages/login/signin_main.dart';
 import 'package:timetrackerapp/services/auth.dart';
 
 class Landing extends StatelessWidget {
@@ -15,7 +15,7 @@ class Landing extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           User user = snapshot.data;
           if (user == null) {
-            return Login();
+            return Login.create(context);
           } else {
             return Home();
           }
