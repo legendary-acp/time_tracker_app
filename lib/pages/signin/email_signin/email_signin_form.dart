@@ -3,15 +3,29 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
+import 'package:timetrackerapp/pages/signin/email_signin/email_signin_bloc.dart';
 import 'package:timetrackerapp/services/auth.dart';
 import 'package:timetrackerapp/services/validator.dart';
 import 'package:timetrackerapp/custom_widget/button.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'email_signin_model.dart';
 
-enum EmailSignInFormType { signIn, register }
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
+  EmailSignInForm({@required this.bloc});
+
+  final EmailSignInBloc bloc;
+
+  static Widget create(BuildContext context) {
+    final AuthBase auth = Provider.of<AuthBase>(context);
+    return Provider<EmailSignInBloc>(
+        create: (context) => EmailSignInBloc(auth: auth),
+        child: Consumer<EmailSignInBloc>(
+          builder: (context, bloc, _) => EmailSignInForm(bloc: bloc),
+        ),
+        dispose: (context, bloc) => bloc.dispose(),
+    );
+  }
 
   @override
   _EmailSignInFormState createState() => _EmailSignInFormState();
@@ -23,18 +37,8 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
-  String get _email => _emailController.text;
-
-  String get _password => _passwordController.text;
-  EmailSignInFormType _formType = EmailSignInFormType.signIn;
-  bool _submitted = false;
-  bool _isLoading = false;
-
   void _submit() async {
-    setState(() {
-      _submitted = true;
-      _isLoading = true;
-    });
+
     try {
       final auth=Provider.of<AuthBase>(context, listen: false);
       if (_formType == EmailSignInFormType.signIn) {
@@ -57,19 +61,17 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
   void _emailEditingComplete() {
-    final newFocus = widget.emailValidator.isValid(_email)
+    final newFocus = widget.emailValidator.isValid(widget.bloc.email)
         ? _passwordFocusNode
         : _emailFocusNode;
     FocusScope.of(context).requestFocus(newFocus);
   }
 
   void _toggleFormType() {
-    setState(() {
-      _submitted = false;
-      _formType = _formType == EmailSignInFormType.signIn
-          ? EmailSignInFormType.register
-          : EmailSignInFormType.signIn;
-    });
+
+    widget.bloc.updateWith(submitted: false,formType : widget.bloc.formType == EmailSignInFormType.signIn
+        ? EmailSignInFormType.register
+        : EmailSignInFormType.signIn)
     _emailController.clear();
     _passwordController.clear();
   }
@@ -102,7 +104,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
           ),
           height: 40.0,
           color: Colors.indigo,
-          onpress: submitEnabled ? _submit : null,
+          onpress: submitEnabled ? widget.bloc.submit : null,
         ),
         SizedBox(height: 8.0),
         FlatButton(
@@ -141,7 +143,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       obscureText: true,
       textInputAction: TextInputAction.done,
       onChanged: (password) => _updateState(),
-      onEditingComplete: _submit,
+      onEditingComplete: widget.bloc.submit,
     );
   }
 
@@ -166,13 +168,18 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: _buildChildren(),
-      ),
+    return StreamBuilder<EmailSignInModel>(
+        stream: widget.bloc.modelStream,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: _buildChildren(),
+            ),
+          );
+        }
     );
   }
 

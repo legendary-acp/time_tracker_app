@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timetrackerapp/pages/home.dart';
-import 'package:timetrackerapp/pages/login/signin_main.dart';
+import 'package:timetrackerapp/pages/signin/signin_main.dart';
 import 'package:timetrackerapp/services/auth.dart';
 
 class Landing extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timetrackerapp/pages/login/email_signin/email_signin_form.dart';
+import 'package:timetrackerapp/pages/signin/email_signin/email_signin_form.dart';
 
 class EmailSignIn extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class _EmailSignInState extends State<EmailSignIn> {
         elevation: 10.0,
       ),
       body: SingleChildScrollView(
-        child: EmailSignInForm(),
+        child: EmailSignInForm.create(context),
       ),
     );
   }

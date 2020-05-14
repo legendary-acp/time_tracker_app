@@ -5,8 +5,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:timetrackerapp/custom_widget/button.dart';
 import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
-import 'package:timetrackerapp/pages/login/email_signin/email_signin.dart';
-import 'package:timetrackerapp/pages/login/signin_bloc.dart';
+import 'package:timetrackerapp/pages/signin/email_signin/email_signin.dart';
+import 'package:timetrackerapp/pages/signin/signin_bloc.dart';
 import 'package:timetrackerapp/services/auth.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
