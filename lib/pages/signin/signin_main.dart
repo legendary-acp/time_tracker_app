@@ -6,26 +6,39 @@ import 'package:provider/provider.dart';
 import 'package:timetrackerapp/custom_widget/button.dart';
 import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
 import 'package:timetrackerapp/pages/signin/email_signin/email_signin.dart';
-import 'package:timetrackerapp/pages/signin/signin_bloc.dart';
+import 'package:timetrackerapp/pages/signin/signin_manger.dart';
 import 'package:timetrackerapp/services/auth.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
-class Login extends StatelessWidget {
-  const Login({Key key, @required this.bloc}) : super(key: key);
-  final SignInBloc bloc;
+class Signin extends StatelessWidget {
+  const Signin({Key key, @required this.manager, @required this.isLoading}) : super(key: key);
+  final SignInManager manager;
+  final bool isLoading;
 
-  static Widget create(BuildContext context){
-    final AuthBase auth=Provider.of<AuthBase>(context);
-    return Provider<SignInBloc>(
-      create: (_) => SignInBloc(auth: auth),
-      dispose: (context,bloc) => bloc.dispose(),
-      child: Consumer<SignInBloc>(builder: (context, bloc, _) => Login(bloc: bloc,)),
+  static Widget create(BuildContext context) {
+    final AuthBase auth = Provider.of<AuthBase>(context);
+    return ChangeNotifierProvider<ValueNotifier<bool>>(
+      create: (_) => ValueNotifier<bool>(false),
+      child: Consumer<ValueNotifier<bool>>(
+        builder: (_, isLoading, __) => Provider<SignInManager>(
+          create: (_) => SignInManager(
+            auth: auth,
+            isLoading: isLoading,
+          ),
+          child: Consumer<SignInManager>(
+            builder: (context, manager, _) => Signin(
+              manager: manager,
+              isLoading: isLoading.value,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
-      await bloc.signInAnonymously();
+      await manager.signInAnonymously();
     } on PlatformException catch (e) {
       PlatformAlertDialog(
         title: 'Sign in failed',
@@ -37,7 +50,7 @@ class Login extends StatelessWidget {
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      await bloc.signInWithGoogle();
+      await manager.signInWithGoogle();
     } on PlatformException catch (e) {
       PlatformAlertDialog(
         title: 'Sign in failed',
@@ -49,7 +62,7 @@ class Login extends StatelessWidget {
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
-      await bloc.signInWithFacebook();
+      await manager.signInWithFacebook();
     } on PlatformException catch (e) {
       PlatformAlertDialog(
         title: 'Sign in failed',
@@ -68,15 +81,14 @@ class Login extends StatelessWidget {
     );
   }
 
-  Widget _loginBuild(context, bool isLoading) {
+  Widget _loginBuild(context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.cyan, Colors.indigo],
-        )
-      ),
+          gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Colors.cyan, Colors.indigo],
+      )),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -116,8 +128,7 @@ class Login extends StatelessWidget {
                 ],
               ),
               color: Colors.white,
-              onpress: isLoading
-                  ? null : () => _signInWithGoogle(context),
+              onpress: isLoading ? null : () => _signInWithGoogle(context),
             ),
             SizedBox(
               height: 10.0,
@@ -141,8 +152,7 @@ class Login extends StatelessWidget {
                 ],
               ),
               color: Colors.indigo,
-              onpress: isLoading
-                  ? null : () => _signInWithFacebook(context),
+              onpress: isLoading ? null : () => _signInWithFacebook(context),
             ),
             SizedBox(
               height: 10.0,
@@ -155,8 +165,7 @@ class Login extends StatelessWidget {
                 ),
               ),
               color: Colors.lightGreen,
-              onpress: isLoading
-                  ? null :  () => _signInWithEmail(context),
+              onpress: isLoading ? null : () => _signInWithEmail(context),
             ),
             SizedBox(
               height: 10.0,
@@ -179,8 +188,7 @@ class Login extends StatelessWidget {
                 ),
               ),
               color: Colors.lime,
-              onpress: isLoading
-                  ? null :  () => _signInAnonymously(context),
+              onpress: isLoading ? null : () => _signInAnonymously(context),
             )
           ],
         ),
@@ -197,15 +205,8 @@ class Login extends StatelessWidget {
         backgroundColorStart: Colors.cyan,
         backgroundColorEnd: Colors.indigo,
         centerTitle: true,
-
       ),
-      body: StreamBuilder<bool>(
-        stream: bloc.isLoadingStream,
-        initialData: false,
-        builder: (context, snapshot) {
-          return _loginBuild(context, snapshot.data);
-        }
-      ),
+      body: _loginBuild(context),
     );
   }
 }

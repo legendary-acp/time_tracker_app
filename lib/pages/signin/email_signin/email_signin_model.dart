@@ -1,15 +1,25 @@
+import 'package:flutter/cupertino.dart';
+import 'package:timetrackerapp/services/auth.dart';
 import 'package:timetrackerapp/services/validator.dart';
 
 enum EmailSignInFormType { signIn, register }
 
-class EmailSignInModel with EmailAndPasswordValidators {
+class EmailSignInModel with EmailAndPasswordValidators, ChangeNotifier {
   EmailSignInModel({
+    @required this.auth,
     this.email = '',
     this.password = '',
     this.formType = EmailSignInFormType.signIn,
     this.isLoading = false,
     this.submitted = false,
   });
+
+  String email;
+  String password;
+  EmailSignInFormType formType;
+  bool isLoading;
+  bool submitted;
+  final AuthBase auth;
 
   String get primaryButtonText {
     return formType == EmailSignInFormType.signIn
@@ -39,25 +49,51 @@ class EmailSignInModel with EmailAndPasswordValidators {
     return showErrorText ? invalidEmailErrorText : null;
   }
 
-  final String email;
-  final String password;
-  final EmailSignInFormType formType;
-  final bool isLoading;
-  final bool submitted;
 
-  EmailSignInModel copyWith({
+  void toggleFormType() {
+    final formType = this.formType == EmailSignInFormType.signIn
+        ? EmailSignInFormType.register
+        : EmailSignInFormType.signIn;
+    updateWith(
+      email: '',
+      password: '',
+      isLoading: false,
+      submitted: false,
+      formType: formType,
+    );
+  }
+
+  void updatePassword(password) => updateWith(password: password);
+
+  void updateEmail(email) => updateWith(email: email);
+
+  Future<void> submit() async {
+    updateWith(submitted: true, isLoading: true);
+    try {
+      if (this.formType == EmailSignInFormType.signIn) {
+        await auth.signInWithEmailAndPassword(this.email, this.password);
+      } else {
+        await auth.createUserWithEmailAndPassword(
+            this.email, this.password);
+      }
+    } catch (e) {
+      updateWith(isLoading: false);
+      rethrow;
+    }
+  }
+
+  void updateWith({
     String email,
     String password,
     EmailSignInFormType formType,
     bool isLoading,
     bool submitted,
   }) {
-    return EmailSignInModel(
-      email: email ?? this.email,
-      password: password ?? this.password,
-      formType: formType ?? this.formType,
-      isLoading: isLoading ?? this.isLoading,
-      submitted: submitted ?? this.submitted,
-    );
+      this.email = email ?? this.email;
+      this.password = password ?? this.password;
+      this.formType = formType ?? this.formType;
+      this.isLoading = isLoading ?? this.isLoading;
+      this.submitted = submitted ?? this.submitted;
+      notifyListeners();
   }
 }
