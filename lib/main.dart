@@ -8,6 +8,7 @@ void main() => runApp(Provider<AuthBase>(
       child: MaterialApp(
         theme: ThemeData(
           primaryColor: Colors.indigo,
+          fontFamily: 'Oxygen',
         ),
         debugShowCheckedModeBanner: false,
         home: Landing(),
