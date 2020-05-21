@@ -29,6 +29,7 @@ class EmptyContent extends StatelessWidget {
             color: Colors.black54,
             fontSize: 16.0,
           ),
+            textAlign: TextAlign.center,
           )
         ],
       ),

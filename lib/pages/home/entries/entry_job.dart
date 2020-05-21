@@ -1,5 +1,5 @@
-import 'package:time_tracker_flutter_course/app/home/models/entry.dart';
-import 'package:time_tracker_flutter_course/app/home/models/job.dart';
+import 'package:timetrackerapp/models/entry.dart';
+import 'package:timetrackerapp/models/jobs.dart';
 
 class EntryJob {
   EntryJob(this.entry, this.job);

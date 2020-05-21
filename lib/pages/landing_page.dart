@@ -17,9 +17,12 @@ class Landing extends StatelessWidget {
             if (user == null) {
               return Signin.create(context);
             } else {
-              return Provider<Database>(
-                  create: (_) => FirestoreDatabase(uid: user.uid),
-                  child: HomePage());
+              return Provider<User>.value(
+                value: user,
+                child: Provider<Database>(
+                    create: (_) => FirestoreDatabase(uid: user.uid),
+                    child: HomePage()),
+              );
             }
           } else {
             return Scaffold(

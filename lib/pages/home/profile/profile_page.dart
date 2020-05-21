@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timetrackerapp/custom_widget/avatar.dart';
 import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
 import 'package:timetrackerapp/services/auth.dart';
 
@@ -33,6 +33,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -42,7 +43,31 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () => widget._confirmSignOut(context),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(130),
+          child: _buildUserInfo(user),
+        ),
       ),
+    );
+  }
+
+  Widget _buildUserInfo(User user) {
+    return Column(
+      children: <Widget>[
+        ProfileAvatar(
+          photoUrl: user.photoUrl,
+          radius: 50,
+        ),
+        SizedBox(height: 8,),
+        if(user.displayName!=null)
+          Text(
+            user.displayName,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        SizedBox(height: 8,),
+      ],
     );
   }
 }

@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:timetrackerapp/models/jobs.dart';
 import 'package:timetrackerapp/pages/home/jobs/edit_job_page.dart';
 import 'package:timetrackerapp/pages/home/jobs/list_item_builder.dart';
-import 'package:timetrackerapp/services/auth.dart';
 import 'package:timetrackerapp/services/database.dart';
 
 class JobsPage extends StatefulWidget {

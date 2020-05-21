@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:time_tracker_flutter_course/app/home/entries/daily_jobs_details.dart';
-import 'package:time_tracker_flutter_course/app/home/entries/entries_list_tile.dart';
-import 'package:time_tracker_flutter_course/app/home/entries/entry_job.dart';
-import 'package:time_tracker_flutter_course/app/home/job_entries/format.dart';
-import 'package:time_tracker_flutter_course/app/home/models/entry.dart';
-import 'package:time_tracker_flutter_course/app/home/models/job.dart';
-import 'package:time_tracker_flutter_course/services/database.dart';
+import 'package:timetrackerapp/pages/home/entries/daily_jobs_details.dart';
+import 'package:timetrackerapp/pages/home/entries/entries_list_tile.dart';
+import 'package:timetrackerapp/pages/home/entries/entry_job.dart';
+import 'package:timetrackerapp/pages/home/job_entries/format.dart';
+import 'package:timetrackerapp/models/entry.dart';
+import 'package:timetrackerapp/models/jobs.dart';
+import 'package:timetrackerapp/services/database.dart';
 
 class EntriesBloc {
   EntriesBloc({@required this.database});
   final Database database;
 
   /// combine List<Job>, List<Entry> into List<EntryJob>
-  Stream<List<EntryJob>> get _allEntriesStream => Observable.combineLatest2(
+  Stream<List<EntryJob>> get _allEntriesStream => Rx.combineLatest2(
         database.entriesStream(),
         database.jobsStream(),
         _entriesJobsCombiner,
@@ -32,6 +32,9 @@ class EntriesBloc {
       _allEntriesStream.map(_createModels);
 
   static List<EntriesListTileModel> _createModels(List<EntryJob> allEntries) {
+    if(allEntries.isEmpty){
+      return [];
+    }
     final allDailyJobsDetails = DailyJobsDetails.all(allEntries);
 
     // total duration across all jobs
