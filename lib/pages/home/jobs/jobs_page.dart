@@ -1,32 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:timetrackerapp/pages/home/job_entries/job_entries_page.dart';
+import 'package:timetrackerapp/pages/home/jobs/job_tiles.dart';
 import 'package:timetrackerapp/custom_widget/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:timetrackerapp/models/jobs.dart';
+import 'package:timetrackerapp/pages/home/jobs/edit_job_page.dart';
+import 'package:timetrackerapp/pages/home/jobs/list_item_builder.dart';
 import 'package:timetrackerapp/services/auth.dart';
 import 'package:timetrackerapp/services/database.dart';
 
 class JobsPage extends StatefulWidget {
-  Future<void> _signOut(BuildContext context) async {
-    try {
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signOut();
-    } catch (e) {
-      print('This is error ${e.toString()}s');
-    }
-  }
 
-  Future<void> _confirmSignOut(BuildContext context) async {
-    final didRequestSignOut = await PlatformAlertDialog(
-      title: 'Sign Out',
-      content: 'Are you sure you want to signout?',
-      defaultActionText: 'Logout',
-      cancelActionText: 'Cancel',
-    ).show(context);
-    if (didRequestSignOut) {
-      _signOut(context);
-    }
-  }
 
   @override
   _JobsPageState createState() => _JobsPageState();
@@ -35,48 +19,41 @@ class JobsPage extends StatefulWidget {
 class _JobsPageState extends State<JobsPage> {
   @override
   Widget build(BuildContext context) {
-    return _HomeBuild();
+    return _homeBuild();
   }
 
-
-  Future<void> _createJob(BuildContext context) async {
-    try {
-      final database = Provider.of<Database>(context, listen: false);
-      await database.createJob(Job(name: 'Blogging', ratePerHour: 10));
-    } on PlatformException catch (e) {
-      PlatformAlertDialog(
-        title: 'Operation Failed',
-        content: e.message,
-        defaultActionText: 'OK',
-      ).show(context);
-    }
-  }
-
-  // ignore: non_constant_identifier_names
-  Widget _HomeBuild() {
+  Widget _homeBuild() {
     return Scaffold(
       appBar: AppBar(
         title: Text('Jobs'),
         actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'Log out',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-              ),
-            ),
-            onPressed: () => widget._confirmSignOut(context),
-          )
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => EditJobPage.show(context,
+                database: Provider.of<Database>(context, listen: false)),
+          ),
         ],
-        centerTitle: true,
       ),
       body: _buildContent(context),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _createJob(context),
-      ),
     );
+  }
+
+  Future<void> _delete(BuildContext context, Job job) async {
+    try {
+      final database = Provider.of<Database>(context, listen: false);
+      await database.deleteJob(job);
+      PlatformAlertDialog(
+        title: 'Successfully Deleted',
+        content: 'Delete operation complete',
+        defaultActionText: 'ok',
+      ).show(context);
+    } catch (e) {
+      PlatformAlertDialog(
+        title: 'Deletion Failed',
+        content: 'Can\'t delete right now try again later',
+        defaultActionText: 'ok',
+      ).show(context);
+    }
   }
 
   _buildContent(BuildContext context) {
@@ -84,17 +61,30 @@ class _JobsPageState extends State<JobsPage> {
     return StreamBuilder<List<Job>>(
       stream: database.jobsStream(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final jobs = snapshot.data;
-          final children = jobs.map((job) => Text(job.name)).toList();
-          return ListView(children: children,);
-        }
-        if (snapshot.hasError){
-          return Text('Some error occurred');
-        }
-        return Center(child: CircularProgressIndicator());
+        return ListItemBuilder<Job>(
+          itemBuilder: (context, job) => Dismissible(
+            key: Key('job-${job.id}'),
+            background: Container(
+              color: Color(0xFF8B0000),
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Icon(
+                    Icons.delete_outline,
+                    size: 40.0,
+                    color: Colors.white,
+                  )),
+            ),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) => _delete(context, job),
+            child: JobTile(
+              job: job,
+              onPress: () => JobEntriesPage.show(
+                  database: database, context: context, job: job),
+            ),
+          ),
+          snapshot: snapshot,
+        );
       },
     );
   }
-
 }

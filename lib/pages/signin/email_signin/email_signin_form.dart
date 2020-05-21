@@ -40,7 +40,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       Navigator.of(context).pop();
     } on PlatformException catch (e) {
       PlatformAlertDialog(
-        title: 'Sigin failed',
+        title: 'Sign in failed',
         content: e.message,
         defaultActionText: 'OK',
       ).show(context);
